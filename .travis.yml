@@ -2,10 +2,13 @@ sudo: required
 services:
 - docker
 env:
-  -NODE_VERSION=8-jessie
-  -NODE_VERSION=10-jessie
+  matrix:
+  - "-NODE_VERSION=8-jessie -NODE_VERSION=10-jessie"
+  global:
+  - secure: Qp16BAWcsMqpO9i0mcZMa18z5PEIPYDbuTHk9fo2iCaSr7p/Cg5SB8EAemnJFgWrUHIXReEvFXNOTtppfdf/wayCoJDF0esDX6pMa0kH3rtxJ74ESUyJsinX5EN5V8lWRsk4UZ4JMRIFIYFgouZaKWWYXm0herYf3GTixxgKdyxV/fm0RbEi5a2xPcocAV1u3SEufvu5kG6cEtx/v0u1uiC9I5xkiROzh7KE2nUAcRetE0/4qiBwXHjQmCEdiuODX/qrioLvVF0SK2E47JtgQ1daJqAYFdssorSk808IghYq25GUGa1cwlmD3Su900Gvd3T9TUrj1EsKea3qAlFifeZUesni8xTEsn0SuUkxHqIt4ydD/GY9nC4fubfBsA7eZ1zUxvGqA6dCa4dzceiiMokQ6aOS04FMd2T4D0BxLJW7bbcMlHMHdSL7jU7ZWKBRLv2fkDfkOlG0zfN1RqkAFxg+nVEMm4Z/17uFoCLVU3YANJ6w3Uz5VLTdRHeqR+cIkkq5rdRtsXX1pv5ayD41XEffQJXXrtmQJMvonah0iq8X+cvfUYrI0Ln82P6RtkN27Q6kPTQ7deuij073wg7AvDjzBj3Eo0FBiK33Ne/zS67W5asoAAKlANtwCeIME2O5w86SNMU5oweDk87DjfTNt292scVJM4C2uA2g6r5OaDM=
+  - secure: WIz79y3UdI7b3+YG8JB49csANJuC24894LshpWnBuwe1XRaBh8xESUp42Xzv1svu0JQH4rWYO+R+3RLE4yEIHFvkBgLVSRMtg4NtP/cUADBDUq6p3oBA4tsktkZ0MVAraN1J1v44ZysxcM9NlRukcsdnuNnNBEN3CSGsCg969Z1v+Z0pTDLXtTHFd4hvQjcm7d46hr/u9sdh0wFXkjaRVaRMmq/DnWnTF7HWqNoFLyekjPqN7s84h7Vvc04JVZ03qRTSl4QrUxPFWiiUbHfVlv7Dxj8NsjyUSPG8DXDEPuxkngHrrqb1esoUzsHDvbmhBtoKVo7JT4JC/ZTvDGxUIUrDQDfwu+NQEre2lph08sv+i/PkyQXRXOg/9fFEq3StLL4b0BLCZZmoyInppBZ/iSRbaOj/KIiKBKIKPosKgz2kNJ8p3AqJDcVeP2GBVR5sJ2bkf/Im7NAvKhrG5rPMYQiXzHSw9ZsbegPa5CDFaBZ+vVywGZzusY1jzLskUPoPcap/Ppz8/T7SkErROzyYXuQJU+Ljw7iQo4M4n18Vl8manjCBycK4rF8mzSHv98rLDw0qpRGU3TZP5GPmOGah2pziS4pSgok6cB8IETlSl9KVhxlgnFdbCQhiUYlS8pp2jmaFERbGJEBeJCzSkQ7G7OfiUjRSRlD1XHa/au9emZ4=
 script:
-- bash -c "echo \"${DOCKER_PASSWORD}\" | docker login --username \"${DOCKER_LOGIN}\" --password-stdin"
+- bash -c "echo \"${DOCKER_PASSWORD}\" | docker login --username \"${DOCKER_LOGIN}\"  --password-stdin"
 - docker build -t node:$NODE_VERSION  --build-arg NODE_IMAGE="node.$NODE_VERSION" .
 - docker images
 - docker tag node:$NODE_VERSION $DOCKER_LOGIN/probot-hello:$NODE_VERSION-$(git rev-parse HEAD)
