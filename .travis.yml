@@ -10,7 +10,7 @@ env:
   - secure: MQs9VHV20CyoP/85NBpMBlWUhAxLbZaf6ZS0KufjzrcoTCwGAtabW+ohkzaEViG1QpvQI4nJ01GFTHRONuwXh12FzOOXKL02sqDl+GrllT1iy9LNQB5M8jsOOT5Af56JzJWiO4bCH7hwuAo5tZyU72qer03Eh0LTWkizu05+MsxPwO2pdW/eDJoLje3frvTi1BxOUdnxyOKopuUHscNguzitwq8rGfNLimt2jeICrZizYfEFt9n8uIg8i5D76pHxf4oSGLjbaMDGVDaXdjjGmOUOtSWW28Gn4wZk4hq7Rt7fzbeBycRCpthq3Tmx+5IIg+3H6XSFKongND6mtipgJ4cKYqgRu+AY03dOw6hY6C6WMV2pYtsqPtMw+bihJ+UVEkV8Zk7LVeRKaYfLq4nqUoDwD50s9pNDAIyYCZ6H1YButgA7JSqOZ2oEutGY9MkYrQjdoF3e6vzI7YusZ/JEv/JVP0XQMLDvG7mx201QBSEbVj3WCjlcVuxwh2W6O49CWQq4cjw472e6imVn9MfJVnngO8WK/CCyxBor539N4s5h+p+Fjtr1icgySRE9nCDjoTFT8myNuhHW5QQCwfbO1ACO3K5xaATvgJPOINkjqSx1NebC87AdtbW7MjLxBzp/Y1PGvL6oBsIQiOMZKhovxvOMZklol/A7SVXk8zqTTGo=
 script:
 - docker login -u=$DOCKER_LOGIN -p=$DOCKER_PASSWORD
-- docker build -t node:$NODE_VERSION  --build-arg NODE_IMAGE="node.$NODE_VERSION"
+- docker build -t node:$NODE_VERSION  --build-arg NODE_IMAGE="node:$NODE_VERSION"
   .
 - docker images
 - docker tag node:$NODE_VERSION $DOCKER_LOGIN/probot-hello:$NODE_VERSION-$(git rev-parse
