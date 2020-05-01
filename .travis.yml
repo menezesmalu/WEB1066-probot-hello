@@ -8,9 +8,49 @@ env:
   global:
   - secure: lL29gHvJEmUtYK8YqWecZjlgHUV+jiUFdii1DJX/uszbld27twvIkjvcyx8T/yEdrd0B4tDaWyW3xpPfGoERTSiBrzPwge/94Bb8wbZ2JYEtmOGneiRAPdWhO2DX9XLr8rrxBziIbsRhqzi9bs5aLxeJshzhruQ/3rtogsO1+tqddsqDvpq0L2zZ966i8lHHSVuZBNsGDspISRLcYv66OgACIA7kcZ3vafBu7vISYJW/KD6lYZVswBPSxR0QC7ejeUGnVeVqyVkIA0FxPWJfvSwBbUF/1rZYLDQzAD1ddVTJKW/0Tahv658tIKq1M8WoIwoazHKAH+c7ivUC/Psi7+0uhUnTD4lJODYAvYpbYzO9jXO7r0xwPvA6DKes4OaBsyym6Qn9iZ75oU1THmEXGy6Q4FX0q+n+5BsShAeS0mqB7UORdqstIeu3+1ERL9o/Tl7ZJgPTwIVGQPfe8MEDKNB2ZOsK04QpOOqByQlweM7ZtO2f6xMcizSZ3t6w8KBfWqF1FQzbpp0f+8kiKWCeOtIyTOH2hYS2IRrg7VReeVLrsYdI0cdAySe3k0ZKB1bGvE9h9XwHqnICnnWB6uFo+6EaXhGpNJIZAHMdvNYFTxQetc/58XgxePhCw8JIi4TNx3xbkNFB5SHPaHrBVy9vaJEw4BS/Qa5x7SqZ60GoZ04=
   - secure: MQs9VHV20CyoP/85NBpMBlWUhAxLbZaf6ZS0KufjzrcoTCwGAtabW+ohkzaEViG1QpvQI4nJ01GFTHRONuwXh12FzOOXKL02sqDl+GrllT1iy9LNQB5M8jsOOT5Af56JzJWiO4bCH7hwuAo5tZyU72qer03Eh0LTWkizu05+MsxPwO2pdW/eDJoLje3frvTi1BxOUdnxyOKopuUHscNguzitwq8rGfNLimt2jeICrZizYfEFt9n8uIg8i5D76pHxf4oSGLjbaMDGVDaXdjjGmOUOtSWW28Gn4wZk4hq7Rt7fzbeBycRCpthq3Tmx+5IIg+3H6XSFKongND6mtipgJ4cKYqgRu+AY03dOw6hY6C6WMV2pYtsqPtMw+bihJ+UVEkV8Zk7LVeRKaYfLq4nqUoDwD50s9pNDAIyYCZ6H1YButgA7JSqOZ2oEutGY9MkYrQjdoF3e6vzI7YusZ/JEv/JVP0XQMLDvG7mx201QBSEbVj3WCjlcVuxwh2W6O49CWQq4cjw472e6imVn9MfJVnngO8WK/CCyxBor539N4s5h+p+Fjtr1icgySRE9nCDjoTFT8myNuhHW5QQCwfbO1ACO3K5xaATvgJPOINkjqSx1NebC87AdtbW7MjLxBzp/Y1PGvL6oBsIQiOMZKhovxvOMZklol/A7SVXk8zqTTGo=
+
 script:
 - bash -c "echo \"${DOCKER_PASSWORD}\" | docker login --username \"${DOCKER_LOGIN}\" --password-stdin"
 - docker build -t node:$NODE_VERSION  --build-arg NODE_IMAGE="node:$NODE_VERSION" .
 - docker images
-- docker tag node:$NODE_VERSION $DOCKER_LOGIN/probot-hello:$NODE_VERSION-$(git rev-parse  HEAD)
+- docker tag node:$NODE_VERSION $DOCKER_LOGIN/probot-hello:$NODE_VERSION-$(git rev-parse HEAD)
 - docker push $DOCKER_LOGIN/probot-hello:$NODE_VERSION-$(git rev-parse HEAD)
+
+stages:
+  - test
+  - npm-targets
+
+jobs:
+  include:
+    - stage: npm-targets
+      name: "Test 8-jessie"
+      install: skip
+      script:
+        - docker run --rm $DOCKER_LOGIN/probot-hello:$NODE_VERSION-$(git rev-parse HEAD) npm run $NPM_TARGET
+      env:
+        - NODE_VERSION=8-jessie
+        - NPM_TARGET=test
+    - stage: npm-targets
+      name: "Test 8-jessie"
+      install: skip
+      script:
+        - docker run --rm $DOCKER_LOGIN/probot-hello:$NODE_VERSION-$(git rev-parse HEAD) npm run $NPM_TARGET
+      env:
+        - NODE_VERSION=8-jessie
+        - NPM_TARGET=lint
+    - stage: npm-targets
+      name: "Test 10-jessie"
+      install: skip
+      script:
+        - docker run --rm $DOCKER_LOGIN/probot-hello:$NODE_VERSION-$(git rev-parse HEAD) npm run $NPM_TARGET
+      env:
+        - NODE_VERSION=10-jessie
+        - NPM_TARGET=test
+    - stage: npm-targets
+      name: "Test 10-jessie"
+      install: skip
+      script:
+        - docker run --rm $DOCKER_LOGIN/probot-hello:$NODE_VERSION-$(git rev-parse HEAD) npm run $NPM_TARGET
+      env:
+        - NODE_VERSION=10-jessie
+        - NPM_TARGET=lint
