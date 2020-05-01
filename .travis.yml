@@ -1,10 +1,16 @@
 sudo: required
 services:
-  - docker
-
-before_install:
-  - docker pull node:8-onbuild
-  - docker build -t probot-hello .
-
+- docker
+env:
+  matrix:
+  - NODE_VERSION=8-jessie
+  - NODE_VERSION=10-jessie
+  global:
+  - secure: SDYvzXCvqwlBSMTxH6EdN7RdKfARrk65s6KcZiC9ed856xTedxICs9bD93NzbsjWpjQ5/kEhLWaEExQjriVvLkFl+DoiWNySMHc0h9gOUFJERFIwUyngxxhBFC+hI8PYX6k5UEFqB6akC7xtZlDNtdoQOIZqKgD9FkPb+ZiCz6UKuIVDvcEo6lEVcFuDvy03c/hlyVUYC2NDBqtMLo8NY1zM3Trvzfv1Nlme3E6aZSBo1VKJZxXc69uLX6/dnw9VJ/kwpl82QiwRh7Os2qehxCCPl/nhLxStJw5xfa5JnHU8wtJfpUNsAJBCzWUIjlOszcFyscWJVRRLvSnJOUla7TYcjzED2yoiZDefhUjuQNP8+IfV4JaUY1y9fBjiVvYf2mEh0T46qYZrNyQOdLgJryzU96u8OZh0J4SEWQddJgaXYOaIihkTWxeGRXOg4RyEbgpHZt/Lm9XQkW5ukfcIKB8jD2xGr+o6PN3rFBhhZhZ69477WG5b8vSZ2x6f+ORbrOMlYHVlrUNeNIlxVEZafIobvPQLr1J7Ug2VM80Q/St30ORSoCYRG9y4Ty+iuwMQw7AMOJcAGk3TQq+m9PWG03LHKGzyxeWZCvUb7oos/KlMlKyhtPG8ZvZqiKx6ciJ01tXQvp33CJHxJxWvl2GkrAQ+YaizSJgyp5NHTQLKp3E=
+  - secure: YqZAYuQUM1c4jhLf0a/tivJmcTLfs97caOutBUMWBn7VB2wzFsHDxWigeFgJ7QfGnxsERFtGC2Nt0wKCHa5/dwzoD4BDZLeb63jTHTyl1ZQYTKrOOwt/r2k0F+YmizBQAissfpWAk3hZFbKXQHAFFDp1UbbmvmaF9a4XrTLkVZEPEpZajVQCSATBBkxhG/claZ98dnKLvKGxOI1iUzLr1bnTzBUEdbScD5QiluWRjYySfPQ3NOwZRZxN51icLTjM7aWZUT60QvFolS8v6/wVtzrfPoQiDSk4bTGBOrk9cW0zmjXI1V8+aBkA9oMio4X4nPQ79xaLF8MIfNIitYzKLky/tXhQZnObs7ooK42owd5BLBu0GsqzMEygICbZF6rW3gyUUhUU8PXcdDiRy/DgBbbqJFfwWbOvgGj7+G91nOzhEifzxHYtLr3EtML6fD9VA0M1o2kCcoKgfnR5Q0q/aiJXanCVW9BpeU3/Og1glMPatc0oRzguTyuqzIqjJPorG8lpRdim+01AHFfwpbYhHol7jl9qdLVvMmGCZ/CzSdw1/dSUVBbSFYrXT0B2FSKsL1OZcgpOV6UOHxyJzsaF0z0vOwTyzFht+tVebxQo/bPCK2YWC94E0jTKm0sNI8p5aLZo3TiUlcxA2pCBVBAreuzhdIaaJhvy7bB4ZmSFRoE=
 script:
-  - docker run --rm probot-hello npm run test
+- docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+- docker build -t node:$NODE_VERSION  --build-arg NODE_IMAGE="node.$NODE_VERSION" .
+- docker images
+- docker tag node:$NODE_VERSION $DOCKER_USERNAME/probot-hello:$NODE_VERSION-$(git rev-parse HEAD)
+- docker push $DOCKER_USERNAME/probot-hello:$NODE_VERSION-$(git rev-parse HEAD)
